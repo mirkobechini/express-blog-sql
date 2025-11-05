@@ -18,20 +18,19 @@ function index(req, res) {
 
 function show(req, res) {
 
-    const post_id = parseInt(req.params.id)
-    const post = posts.find(post => post.id == post_id)
-    if (!post) {
-        res.status(404)
-            .json({
-                error: true,
-                message: "Post not found"
-            })
-    }
+    const post_id = Number(req.params.id)
+    
+    const sql = 'SELECT * FROM posts WHERE id = ?'
 
-    res.status(200)
-        .json({
-            post
-        })
+    connection.query(sql, [post_id], (err, result)=>{
+        if(err) return res.status(500).json({error: err.message})
+        if(result.length === 0) return res.status(404).json("Post non trovato")
+
+
+        const postObj = result[0]
+
+        res.status(200).json(postObj)
+    })
 
 }
 
@@ -81,7 +80,7 @@ function destroy(req, res) {
 
     const sql = 'DELETE FROM posts WHERE id = ?';
 
-    const id = req.params.id
+    const id = Number(req.params.id)
 
     connection.query(sql, [id], (err, result) => {
         if (err) return res.status(500).json({ error: err.message })
