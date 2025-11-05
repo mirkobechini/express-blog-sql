@@ -5,14 +5,14 @@ const posts = require('../data/posts')
 const connection = require('../data/connections')
 
 function index(req, res) {
-    let filtered_posts = posts
-    if (req.query.tag) {
-        filtered_posts = posts.filter(post => post.tag.includes(req.query.tag))
-    }
-
-    res.status(200)
-    .json({
-        filtered_posts
+    
+    const sql = "SELECT * FROM posts";
+    
+    connection.query(sql, (err,result)=>{
+        if(err) return res.status(500).json({error: err.message})
+        console.log(result);
+        
+        res.status(200).json(result);
     })
 }
 
