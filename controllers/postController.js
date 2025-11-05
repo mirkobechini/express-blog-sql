@@ -1,6 +1,9 @@
 //Import posts data
 const posts = require('../data/posts')
 
+//Import connection
+const connection = require('../data/connections')
+
 function index(req, res) {
     let filtered_posts = posts
     if (req.query.tag) {
