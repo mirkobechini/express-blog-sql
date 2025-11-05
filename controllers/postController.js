@@ -5,13 +5,13 @@ const posts = require('../data/posts')
 const connection = require('../data/connections')
 
 function index(req, res) {
-    
-    const sql = "SELECT * FROM posts";
-    
-    connection.query(sql, (err,result)=>{
-        if(err) return res.status(500).json({error: err.message})
+
+    const sql = 'SELECT * FROM posts';
+
+    connection.query(sql, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message })
         console.log(result);
-        
+
         res.status(200).json(result);
     })
 }
@@ -22,16 +22,16 @@ function show(req, res) {
     const post = posts.find(post => post.id == post_id)
     if (!post) {
         res.status(404)
-        .json({
-            error: true,
-            message: "Post not found"
-        })
+            .json({
+                error: true,
+                message: "Post not found"
+            })
     }
 
     res.status(200)
-    .json({
-        post
-    })
+        .json({
+            post
+        })
 
 }
 
@@ -79,21 +79,17 @@ function modify(req, res) {
 
 function destroy(req, res) {
 
-    const post_id = parseInt(req.params.id)
+    const sql = 'DELETE FROM posts WHERE id = ?';
 
-    const post = posts.find(post => post.id == post_id)
+    const id = req.params.id
 
-    if (!post) {
-        res.status(404)
-        .json({
-            error: true,
-            message: "Post not found"
-        })
-    }
+    connection.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message })
+        if (result.affectedRows === 0) return res.status(404).json({ error: "Post non trovato" })
 
-    posts.splice(posts.indexOf(post), 1)
-    console.log(posts);
-    res.sendStatus(204)
+        res.status(204).end()
+    })
+
 }
 
 module.exports = {
